@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .chat-box {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #messages {
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+
+    .message {
+      background: #e9f3ff;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Chat</h1>
+
+  <div class="chat-box">
+    <div class="controls">
+      <input type="text" id="messageInput" placeholder="Enter your message" />
+      <button id="sendBtn">Send Message</button>
+    </div>
+
+    <div id="messages"></div>
+  </div>
+
+  <!-- Клиентская библиотека Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    const socket = io();
+
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const messages = document.getElementById("messages");
+
+    sendBtn.addEventListener("click", () => {
+      const text = messageInput.value.trim();
+
+      if (!text) return;
+
+      socket.emit("chat message", text);
+      messageInput.value = "";
+    });
+
+    socket.on("message received", (data) => {
+      const div = document.createElement("div");
+      div.className = "message";
+      div.textContent = data;
+      messages.appendChild(div);
+    });
+  </script>
+</body>
+</html>
